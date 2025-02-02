@@ -1,3 +1,7 @@
+'''
+App "Emotion Analyzer"
+'''
+
 from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
@@ -6,16 +10,28 @@ app = Flask("Emotion Analyzer")
 
 @app.route("/emotionDetector")
 def emotion_analyzer():
-    textToAnalyze = request.args.get('textToAnalyze')
-    response = emotion_detector(textToAnalyze)
-    if response['dominant_emotion'] == None:
-        return "Invalid text! Please try again!"
+    '''
+    This function gets the text from the form and sends
+    to the Watson's API
+    '''
+
+    text = request.args.get('textToAnalyze')
+    response = emotion_detector(text)
+    if response['dominant_emotion'] is None:
+        answer = "Invalid text! Please try again!"
     else:
-        return f"For the given statement, the system response is 'anger': {response['anger']}, 'disgust': {response['disgust']}, \
-        'fear': {response['fear']}, 'joy': {response['joy']} and 'sadness': {response['sadness']}. The dominant emotion is <b>{response['dominant_emotion']}</b>"
+        answer = f"""
+            For the given statement, the system response is 'anger': {response['anger']},
+            'disgust': {response['disgust']}, 'fear': {response['fear']}, 'joy': {response['joy']}
+            and 'sadness': {response['sadness']}. The dominant emotion is <b>{response['dominant_emotion']}</b>
+        """
+    return answer
 
 @app.route("/")
 def render_index_page():
+    '''
+    Function rendering the Index file
+    '''
     return render_template('index.html')
 
 if __name__ == "__main__":
